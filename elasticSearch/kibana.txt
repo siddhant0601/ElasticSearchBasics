@@ -1,0 +1,96 @@
+GET _cluster/health
+GET _cat/nodes?v
+//creating product with random id
+POST /product/_doc
+{
+  "name":"coffee",
+  "price":"100"
+}
+//creating product with given id 100
+PUT /product/_doc/100
+{
+  "name":"coffee",
+  "price":"100"
+}
+GET /product  //get all product
+GET /product/_doc/100  // product with id 100
+
+//updating the product
+POST /product/_update/100
+{
+  "doc":{
+    "inStock":2
+  }
+}
+POST /product/_update/100
+{
+  //update the variable directly without first reteriving first and then updating
+  "script": {
+    "source": "ctx._source.inStock--"
+  }
+}
+
+POST /product/_update/101
+{
+  //if no document is there then upsert will create a document else script will be run
+  "script": {
+    "source": "ctx._source.inStock--"
+  },
+  "upsert": {
+    "name": "blender",
+    "price": "1001",
+    "inStock": 4
+  }
+}
+GET /product/_doc/101
+//to update doc same id post req
+PUT /product/_doc/100
+{
+  "name":"newCofffee",
+  "price":"100"
+}
+
+GET /product/_doc/100
+//delete document 
+DELETE /product/_doc/101
+GET /product/_doc/
+POST /product/_doc
+{
+  "name":"coffee",
+  "price":"100"
+}
+POST /product/_update_by_query
+{
+  "script": {
+    "source": "if (ctx._source.inStock == null) { ctx._source.inStock = 0 } else { ctx._source.inStock -= 1 }"
+  },
+  "query": {
+    "match_all": {}
+  }
+}  //update all documents with some condition
+POST /product/_delete_by_query
+{
+  
+  "query": {
+    "match_all": {}
+  }
+}  //delete all documents with some condition
+//bulk-multiple operations at once , index new or replace create - error if doc already exist , ndjsons
+POST /_bulk
+{"index":{"_index":"product","_id":105}}
+{"name":"jeans500","price":100,"inStock":12}
+{"create":{"_index":"product","_id":111}}
+{"name":"jeans505","price":1020,"inStock":12}
+
+POST /product/_bulk
+{"update":{"_id":100}}
+{ "doc":{ "name":"frother"}}
+{"delete":{"_id":105}}
+
+GET /product/_search
+{
+  "size":20,  // by default 10 size of return change the size
+  "query": {
+    "match_all": {}
+  }
+}

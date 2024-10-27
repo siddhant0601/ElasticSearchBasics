@@ -6,9 +6,6 @@ const doucmentRoute=require('./api/routes/document')
 app.use(bodyParser.json());
 app.use('/index',indexRoute);
 app.use('/document',doucmentRoute);
-
-
-
 app.use((req,res,next)=>{
     const error=new Error("not found url");
     error.status=400;
