@@ -89,8 +89,90 @@ POST /product/_bulk
 
 GET /product/_search
 {
-  "size":20,  // by default 10 size of return change the size
+  "size":100,  // by default 10 size of return change the size
   "query": {
     "match_all": {}
   }
 }
+
+GET /product/_search
+{
+  "query": {
+    "term": {
+      "tags.keyword": "seafood"
+    }
+  }
+}
+GET /product/_search
+{
+  "query": {
+    "terms": {  //terms not term for the below list
+      "tags.keyword": ["Seafood","Meat"]   //in list
+    }
+  }
+}
+GET /product/_search
+{
+  "query": {
+    "term": {
+      "tags.keyword": {
+        "value": "seafood",
+        "case_insensitive":true
+      }
+    }
+  }
+}
+GET /product/_search
+{
+  "query": {
+    "term": {
+      "in_stock":"40"
+    }
+  }
+}
+GET /product/_search  //search using ids
+{
+  "query": {
+    "ids": {
+      "values": ["1",2,3]
+    }
+  }
+}
+GET product/_search   //range search
+{
+  "query": {
+    "range": {
+      "in_stock": {
+        "gte": 37,
+        "lte": 40
+      }
+    }
+  }
+}
+GET product/_search  //prefix search 
+{
+  "query": {
+    "prefix": {
+      "name.keyword": {
+        "value": "Ch"
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -31,10 +31,17 @@ exports.addBulkDocument = async (req, res, next) => {
             console.log(operation)
             if (operation.index) {
                 body.push({ index: {_index:"product", _id: operation.index._id } });
+                detail={}
+                for( key in operation.product){
+                    detail[key]=operation.product[key];
+                }
+                body.push(detail)
+
             } else {
                 body.push(operation);
             }
         }
+        console.log(body)
 
         const result = await client.bulk({ body });
 
@@ -74,3 +81,28 @@ exports.allDocument=async(req,res,next)=>{
         res.status(500).json({ msg: "failed", err });
     }
 };
+exports.GetDocumentIds=async(req,res,next)=>{
+    try{
+        // {
+        //     "idList":["1"]
+        // }
+        console.log(req.body.idList)
+        const result=await client.search({
+            index:"product",
+            body:{
+                query:{
+                    ids:{
+                        values:req.body.idList
+                    }
+                }
+            }
+        });
+        const documents = result.hits.hits.map(hit => ({
+            id: hit._id,
+            ...hit._source
+        }));
+        res.status(200).json({ msg: "success", documents });
+    } catch (err) {
+        res.status(500).json({ msg: "failed", err });
+    }
+}
